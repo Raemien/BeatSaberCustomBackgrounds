@@ -1,0 +1,8 @@
+<settings-container>
+  <horizontal>
+    <text text='Background Settings' font-size='10'></text>
+  </horizontal>
+  <bool-setting text='Enabled' value='enabled' on-change='trigger-togglebackgrounds' apply-on-change='true'></bool-setting>
+  <bool-setting text='Hide Platform' value='hideobj-platform' on-change='hideobj-refresh' apply-on-change='true'></bool-setting>
+  <bool-setting text='Hide Smoke Effects' value='hideobj-fog' on-change='hideobj-refresh' apply-on-change='true'></bool-setting>
+</settings-container>
