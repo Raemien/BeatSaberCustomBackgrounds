@@ -71,7 +71,8 @@ namespace CustomBackgrounds
 
             skyTextureName = bgname;
 
-            skyboxObject.transform.localScale = Vector3.one * 700;
+            skyboxObject.transform.localScale = Vector3.one * -700;
+            skyboxObject.transform.rotation = Quaternion.Euler(0, 0, 180);
 
             shaderAssetBundle.Unload(false);
         }
