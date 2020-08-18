@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,25 +15,34 @@ namespace CustomBackgrounds
             if (hiddenObjs < 65536 || forceHide) // Tacky workaround for onSceneLoaded events not reliably triggering with environments
             {
                 var config = Settings.instance;
+                const string obj_pplace_menu = "Wrapper/MenuPlayersPlace";
+                const string obj_pplace = "Environment/PlayersPlace";
+                const string obj_smoke = "Environment/BigSmokePS";
+                const string obj_chevron = "Environment/SpawnRotationChevron";
+                const string obj_arrows = "Wrapper/Arrows";
                 Scene curScene = SceneManager.GetActiveScene();
                 GameObject environmentRoot;
                 Renderer[] appendedRenderers = { };
                 Renderer[] excludedRenderers = { };
+
                 switch (curScene.name)
                 {
                     case "GameCore":
-                        environmentRoot = GameObject.Find("Environment/PlayersPlace").transform.parent.gameObject;
+                        environmentRoot = GameObject.Find(obj_pplace).transform.parent.gameObject;
                         foreach (var obj in curScene.GetRootGameObjects().Where(obj => obj.name.Contains("Ring")))
                         {
                             appendedRenderers = appendedRenderers.Concat(obj.GetComponentsInChildren<Renderer>()).ToArray();
                         }
-                        excludedRenderers = excludedRenderers.AddRangeToArray(!config.HidePlatform && !GameObject.Find("Environment/SpawnRotationChevron") ? GameObject.Find("Environment/PlayersPlace").GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>());
-                        excludedRenderers = excludedRenderers.AddRangeToArray(!config.HideFog ? GameObject.Find("Environment/BigSmokePS").GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>());
+                        if (GameObject.Find(obj_smoke) != null)
+                        {
+                            excludedRenderers = excludedRenderers.AddRangeToArray(!config.HideFog ? GameObject.Find(obj_smoke).GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>());
+                        }
+                        excludedRenderers = excludedRenderers.AddRangeToArray(!config.HidePlatform && !GameObject.Find(obj_chevron) ? GameObject.Find(obj_pplace).GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>());
                         break;
                     case "MenuViewControllers":
-                        environmentRoot = GameObject.Find("Wrapper/MenuPlayersPlace").transform.parent.gameObject;
-                        appendedRenderers = GameObject.Find("Wrapper/Arrows").GetComponentsInChildren<Renderer>();
-                        excludedRenderers = !config.HidePlatform ? GameObject.Find("Wrapper/MenuPlayersPlace").GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
+                        environmentRoot = GameObject.Find(obj_pplace_menu).transform.parent.gameObject;
+                        appendedRenderers = GameObject.Find(obj_arrows).GetComponentsInChildren<Renderer>();
+                        excludedRenderers = !config.HidePlatform ? GameObject.Find(obj_pplace_menu).GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
                         break;
                     default:
                         environmentRoot = null;
