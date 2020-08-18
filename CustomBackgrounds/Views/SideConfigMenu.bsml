@@ -5,6 +5,7 @@
   <vertical vertical-fit='PreferredSize' bg='round-rect-panel' pad='2'>
     <bool-setting text='Enabled' value='enabled' on-change='enabled-onchange'></bool-setting>
     <bool-setting text='Image Previews' value='menu-previews' on-change='previews-onchange' hover-hint='Disabling texture previews may improve menu loading time.'></bool-setting>
+    <slider-setting text='Rotation Offset' value='offset-rotation' integer-only='true' max='359' on-change='rotation-onchange'></slider-setting>
   </vertical>
   <vertical vertical-fit='PreferredSize' bg='round-rect-panel' pad='2'>
     <bool-setting text='Hide Menu Environment' value='hideobj-menu' on-change='hideobj-menu-onchange'></bool-setting>

@@ -38,6 +38,12 @@ namespace CustomBackgrounds
             get => config.GetBool("General", "Sprite Previews", true);
             set => config.SetBool("General", "Sprite Previews", value);
         }
+        [UIValue("enable-reflections")]
+        public bool EnableReflections
+        {
+            get => config.GetBool("General", "Reflect Skybox", true);
+            set => config.SetBool("General", "Reflect Skybox", value);
+        }
         public string SelectedBackground
         {
             get => config.GetString("General", "Selected Skybox", "Default");
@@ -68,6 +74,12 @@ namespace CustomBackgrounds
             set => config.SetBool("Hidden Objects", "Hide GameCore Decorations", value);
         }
 
+        //Offsets
+        public int RotationOffset
+        {
+            get => config.GetInt("Offsets", "Rotation Offset", 0);
+            set => config.SetInt("Offsets", "Rotation Offset", value);
+        }
         public bool RegenerateConfig { get; internal set; }
 
         public void Awake()

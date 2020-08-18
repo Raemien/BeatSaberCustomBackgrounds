@@ -26,9 +26,11 @@ namespace CustomBackgrounds
                 {
                     LoadBackground(Settings.instance.SelectedBackground);
                 }
+                skyboxObject.transform.eulerAngles = new Vector3(0, config.RotationOffset, 180);
                 switch (curscene)
                 {
                     case "MenuViewControllers":
+                    case "MenuCore":
                     case "GameCore":
                         EnvironmentHider.HideEnvironmentObjects();
                         break;
@@ -42,10 +44,12 @@ namespace CustomBackgrounds
         }
         public void LoadBackground(string bgname)
         {
+            var config = Settings.instance;
             if (skyboxObject == null)
             {
                 skyboxObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 skyboxObject.transform.position = Vector3.zero;
+                skyboxObject.layer = config.EnableReflections ? 13 : 0;
                 skyboxObject.name = "_SkyBGObject";
             }
             string skyDirectory = Environment.CurrentDirectory + "/CustomBackgrounds/";
@@ -72,7 +76,7 @@ namespace CustomBackgrounds
             skyTextureName = bgname;
 
             skyboxObject.transform.localScale = Vector3.one * -700;
-            skyboxObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+            skyboxObject.transform.rotation = Quaternion.Euler(0, config.RotationOffset, 180);
 
             shaderAssetBundle.Unload(false);
         }
