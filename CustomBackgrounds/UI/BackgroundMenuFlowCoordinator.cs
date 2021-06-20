@@ -7,6 +7,7 @@ namespace CustomBackgrounds
     {
         private BackgroundMenuViewController bgMenuView;
         private SideConfigMenuViewController sideConfigView;
+        private EnvironmentMenuViewController environmentView;
 
         private void Awake()
         {
@@ -18,21 +19,25 @@ namespace CustomBackgrounds
             {
                 sideConfigView = BeatSaberUI.CreateViewController<SideConfigMenuViewController>();
             }
+            if (!environmentView)
+            {
+                environmentView = BeatSaberUI.CreateViewController<EnvironmentMenuViewController>();
+            }
         }
 
-        protected override void DidActivate(bool firstActivation, ActivationType activationType)
+        protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
             if (firstActivation)
             {
-                title = "Custom Skyboxes";
+                SetTitle("Backgrounds");
                 showBackButton = true;
-                ProvideInitialViewControllers(bgMenuView, sideConfigView);
+                ProvideInitialViewControllers(bgMenuView, sideConfigView, environmentView);
             }
         }
 
         protected override void BackButtonWasPressed(ViewController topViewController)
         {
-            BeatSaberUI.MainFlowCoordinator.DismissFlowCoordinator(this, null, false);
+            BeatSaberUI.MainFlowCoordinator.DismissFlowCoordinator(this, null, ViewController.AnimationDirection.Horizontal);
         }
 
 

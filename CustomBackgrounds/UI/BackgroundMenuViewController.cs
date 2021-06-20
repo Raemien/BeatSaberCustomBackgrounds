@@ -51,12 +51,12 @@ namespace CustomBackgrounds
                     string backgroundName = background.Substring(backgroundDir.Length);
                     if (background.EndsWith(".png") || background.EndsWith(".jpeg") || background.EndsWith(".jpg") || background.EndsWith(".gif") && !_BackgroundList.Contains(background))
                     {
-                        Texture2D backgroundIcon = null;
+                        Sprite backgroundIcon = null;
                         if (Settings.instance.EnablePreviews)
                         {
-                            backgroundIcon = UIUtilities.LoadTextureFromFile(background);
-                            backgroundIcon.Compress(false);
-                            backgroundIcon.Apply();
+                            backgroundIcon = UIUtilities.LoadSpriteFromFile(background);
+                            backgroundIcon.texture.Compress(false);
+                            backgroundIcon.texture.Apply();
                         }
 
                         CustomListTableData.CustomCellInfo customCellInfo = new CustomListTableData.CustomCellInfo(backgroundName, "Image File", backgroundIcon);

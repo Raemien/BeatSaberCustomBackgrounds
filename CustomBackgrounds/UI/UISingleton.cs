@@ -5,7 +5,7 @@ namespace CustomBackgrounds
 {
     public class UISingleton : PersistentSingleton<UISingleton>
     {
-        public static MenuButton menuButton = new MenuButton("Skyboxes", "Custom 360 backgrounds", OpenBGMenu);
+        public static MenuButton menuButton = new MenuButton("Backgrounds", "Custom 360 backgrounds", OpenBGMenu);
         private static BackgroundMenuFlowCoordinator backgroundMenuFlowCoordinator;
 
         private static void OpenBGMenu()
@@ -14,7 +14,7 @@ namespace CustomBackgrounds
             {
                 backgroundMenuFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<BackgroundMenuFlowCoordinator>();
             }
-            BeatSaberUI.MainFlowCoordinator.PresentFlowCoordinator(backgroundMenuFlowCoordinator, null, false, false);
+            BeatSaberUI.MainFlowCoordinator.PresentFlowCoordinator(backgroundMenuFlowCoordinator, null, HMUI.ViewController.AnimationDirection.Horizontal, false);
         }
         public static void RegMenuButton()
         {

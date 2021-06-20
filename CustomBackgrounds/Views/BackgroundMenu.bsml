@@ -1,6 +1,6 @@
 ﻿  <vertical child-control-height='false'>
     <page-button click-event='background-list#PageUp' direction='Up'></page-button>
-    <horizontal bg='round-rect-panel'>
+    <horizontal>
       <list id='background-list' expand-cell='true' select-cell='on-select-bg'></list>
     </horizontal>
     <page-button click-event='background-list#PageDown' direction='Down'></page-button>

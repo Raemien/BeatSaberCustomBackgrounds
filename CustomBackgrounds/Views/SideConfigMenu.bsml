@@ -1,14 +1,10 @@
 <vertical child-control-height='false'>
   <horizontal horizontal-fit='PreferredSize' bg='panel-top' pad-left='10' pad-right='10'>
-    <text text='Skybox Settings' font-size='10' align='Center'></text>
+    <text text='Settings' font-size='10' align='Center'></text>
   </horizontal>
-  <vertical vertical-fit='PreferredSize' bg='round-rect-panel' pad='2'>
+  <vertical vertical-fit='PreferredSize' pad='2'>
     <bool-setting text='Enabled' value='enabled' on-change='enabled-onchange'></bool-setting>
     <bool-setting text='Image Previews' value='menu-previews' on-change='previews-onchange' hover-hint='Disabling texture previews may improve menu loading time.'></bool-setting>
     <slider-setting text='Rotation Offset' value='offset-rotation' integer-only='true' max='359' on-change='rotation-onchange'></slider-setting>
-  </vertical>
-  <vertical vertical-fit='PreferredSize' bg='round-rect-panel' pad='2'>
-    <bool-setting text='Hide Menu Environment' value='hideobj-menu' on-change='hideobj-menu-onchange'></bool-setting>
-    <bool-setting text='Hide Game Environment' value='hideobj-game' on-change='hideobj-game-onchange'></bool-setting>
   </vertical>
 </vertical>
