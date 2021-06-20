@@ -1,15 +1,15 @@
 ﻿{
   "$schema": "https://raw.githubusercontent.com/nike4613/ModSaber-MetadataFileSchema/master/Schema.json",
   "author": "Raemien",
-  "description": "A plugin which displays custom 360 skybox images.",
+  "description": "A plugin which displays custom 360 sky images.",
   "features": [],
-  "gameVersion": "1.11.0",
+  "gameVersion": "1.16.2",
   "id": "CustomBackgrounds",
   "name": "Custom Backgrounds",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "dependsOn": {
-    "BSIPA": "^4.0.5",
-    "BeatSaberMarkupLanguage": "^1.3.4",
-    "BS Utils": "^1.4.11"
-  },
+    "BSIPA": "^4.1.6",
+    "BeatSaberMarkupLanguage": "^1.5.3",
+    "BS Utils": "^1.10.0"
+  }
 }
