@@ -1,5 +1,4 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -26,13 +25,15 @@ namespace CustomBackgrounds
                 {
                     LoadBackground(Settings.instance.SelectedBackground);
                 }
-                skyboxObject.transform.eulerAngles = new Vector3(0, config.RotationOffset, 180);
+                skyboxObject.transform.eulerAngles = new Vector3(0, config.RotationOffset - 90, 180);
                 switch (curscene)
                 {
-                    case "MenuViewControllers":
-                    case "MenuCore":
                     case "GameCore":
-                        EnvironmentHider.HideEnvironmentObjects();
+                        EnvironmentHider.HideGameEnv();
+                        break;
+                    case "MainMenu":
+                    case "MenuCore":
+                        EnvironmentHider.HideMenuEnv();
                         break;
                 }
             }
@@ -75,8 +76,8 @@ namespace CustomBackgrounds
 
             skyTextureName = bgname;
 
-            skyboxObject.transform.localScale = Vector3.one * -700;
-            skyboxObject.transform.rotation = Quaternion.Euler(0, config.RotationOffset, 180);
+            skyboxObject.transform.localScale = Vector3.one * -800;
+            skyboxObject.transform.rotation = Quaternion.Euler(0, config.RotationOffset - 90, 180);
 
             shaderAssetBundle.Unload(false);
         }

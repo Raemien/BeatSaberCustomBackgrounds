@@ -1,71 +1,101 @@
 ﻿using HarmonyLib;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BS_Utils.Utilities;
 
 namespace CustomBackgrounds
 {
-    internal static class EnvironmentHider
+    internal class EnvironmentHider
     {
-        public static int hiddenObjs;
-        public static void HideEnvironmentObjects(bool forceHide = false)
+        private static bool GetBGActive()
         {
-            if (hiddenObjs < 65536 || forceHide) // Tacky workaround for onSceneLoaded events not reliably triggering with environments
+            return (CustomBackgrounds.skyBehaviour.skyboxObject && CustomBackgrounds.skyBehaviour.skyboxObject.activeSelf);
+        }
+
+        private static GameObject FindMultiplayerPlatform()
+        {
+            MultiplayerLobbyAvatarPlace[] platforms = Resources.FindObjectsOfTypeAll<MultiplayerLobbyAvatarPlace>();
+            for (int i = 0; i < platforms.Length; i++)
             {
-                var config = Settings.instance;
-                const string obj_pplace_menu = "Wrapper/MenuPlayersPlace";
-                const string obj_pplace = "Environment/PlayersPlace";
-                const string obj_smoke = "Environment/BigSmokePS";
-                const string obj_chevron = "Environment/SpawnRotationChevron";
-                const string obj_arrows = "Wrapper/Arrows";
-                Scene curScene = SceneManager.GetActiveScene();
-                GameObject environmentRoot;
-                Renderer[] appendedRenderers = { };
-                Renderer[] excludedRenderers = { };
-
-                switch (curScene.name)
+                Transform plat = platforms[i].transform;
+                if (plat.GetChild(0).eulerAngles.x == 270.0f && plat.name == "LobbyAvatarPlace(Clone)")
                 {
-                    case "GameCore":
-                        environmentRoot = GameObject.Find(obj_pplace).transform.parent.gameObject;
-                        foreach (var obj in curScene.GetRootGameObjects().Where(obj => obj.name.Contains("Ring")))
-                        {
-                            appendedRenderers = appendedRenderers.Concat(obj.GetComponentsInChildren<Renderer>()).ToArray();
-                        }
-                        if (GameObject.Find(obj_smoke) != null)
-                        {
-                            excludedRenderers = excludedRenderers.AddRangeToArray(!config.HideFog ? GameObject.Find(obj_smoke).GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>());
-                        }
-                        excludedRenderers = excludedRenderers.AddRangeToArray(!config.HidePlatform && !GameObject.Find(obj_chevron) ? GameObject.Find(obj_pplace).GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>());
-                        break;
-                    case "MenuViewControllers":
-                        environmentRoot = GameObject.Find(obj_pplace_menu).transform.parent.gameObject;
-                        appendedRenderers = GameObject.Find(obj_arrows).GetComponentsInChildren<Renderer>();
-                        excludedRenderers = !config.HidePlatform ? GameObject.Find(obj_pplace_menu).GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
-                        break;
-                    default:
-                        environmentRoot = null;
-                        break;
-                }
-
-                if (environmentRoot != null)
-                {
-                    Renderer[] renderers = environmentRoot.GetComponentsInChildren<Renderer>();
-                    if (appendedRenderers.Length > 0)
-                    {
-                        renderers = renderers.Concat(appendedRenderers).ToArray();
-                    }
-                    renderers = renderers.Except(excludedRenderers).ToArray();
-                    bool hiddensetting = curScene.name == "MenuViewControllers" ? !config.HideMenuEnv : !config.HideGameEnv;
-
-                    foreach (Renderer renderer in renderers)
-                    {
-                        renderer.enabled = hiddensetting;
-                        hiddenObjs += 1;
-                    }
+                    return plat.gameObject;
                 }
             }
+            return null;
+        }
+
+        private static void HideChildRenderers(GameObject obj, bool onlymeshes, bool unhide = false)
+        {
+            if (obj == null) return;
+            bool enabled = !GetBGActive() || unhide;
+            var rendarray = onlymeshes ? obj.GetComponentsInChildren<MeshRenderer>() : obj.GetComponentsInChildren<Renderer>();
+            for (int i = 0; i < rendarray.Length; i++)
+            {
+                Renderer renderer = rendarray[i];
+                if (!renderer) continue;
+                renderer.enabled = enabled;
+            }
+        }
+
+        private static void HideChildLights(GameObject obj)
+        {
+            if (obj == null) return;
+            var rendarray = obj.GetComponentsInChildren<Renderer>();
+            for (int i = 0; i < rendarray.Length; i++)
+            {
+                Renderer renderer = rendarray[i];
+                if (!renderer || renderer.GetComponent<LightManager>()) continue;
+                if (!Regex.IsMatch(renderer.name, "bloom|light", RegexOptions.IgnoreCase)) continue;
+                renderer.forceRenderingOff = true;
+            }
+        }
+
+        public static void HideMenuEnv()
+        {
+            bool ismulti = Resources.FindObjectsOfTypeAll<MenuEnvironmentManager>()[0].GetField<int>("_prevMenuEnvironmentType") == 2;
+            bool bgActive = GetBGActive();
+            if (!ismulti)
+            {
+                // Find Objects
+                var floorObj = GameObject.Find("MenuEnvironmentManager/DefaultMenuEnvironment/BasicMenuGround");
+                var notesObj = GameObject.Find("MenuEnvironmentManager/DefaultMenuEnvironment/Notes");
+                var notePileObj = GameObject.Find("MenuEnvironmentManager/DefaultMenuEnvironment/PileOfNotes");
+                var multiEnvObj = FindMultiplayerPlatform();
+
+                // Apply Visibility
+                multiEnvObj.SetActive(bgActive);
+                HideChildRenderers(notesObj, false);
+                HideChildRenderers(notePileObj, false);
+
+                if (floorObj) floorObj.GetComponent<MeshRenderer>().enabled = !bgActive;
+                if (bgActive)
+                {
+                    //HideChildRenderers(multiEnvObj, false);
+                    //HideChildRenderers(GameObject.Find("LobbyAvatarPlace(Clone)"), false, true);
+                }
+            }
+        }
+
+        public static void HideGameEnv()
+        {
+            GameObject environmentObj = GameObject.Find("Environment");
+            GameObject playersPlaceObj = GameObject.Find("Environment/PlayersPlace");
+            GameObject coreLightingObj = GameObject.Find("Environment/CoreLighting");
+
+            HideChildLights(environmentObj);
+            if (Settings.instance.HideGameEnv)
+            {
+                HideChildRenderers(environmentObj, false);
+                HideChildRenderers(playersPlaceObj, false, true);
+            }
+            HideChildRenderers(coreLightingObj, true, true);
         }
     }
 }

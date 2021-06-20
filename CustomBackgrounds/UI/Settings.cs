@@ -24,7 +24,7 @@ namespace CustomBackgrounds
                 skyboxObject.SetActive(val);
             }
         }
-        [UIAction("hideobj-refresh")] private void RefreshHiddenObjects() => EnvironmentHider.HideEnvironmentObjects(true);
+        [UIAction("hideobj-refresh")] private void RefreshHiddenObjects(bool val) => EnvironmentHider.HideMenuEnv();
 
         //General
         [UIValue("enabled")]
