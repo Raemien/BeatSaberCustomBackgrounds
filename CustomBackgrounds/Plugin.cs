@@ -8,6 +8,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using IPALogger = IPA.Logging.Logger;
+using HarmonyLib;
 
 namespace CustomBackgrounds
 {
@@ -15,8 +16,8 @@ namespace CustomBackgrounds
     public class CustomBackgrounds
     {
         public const string assemblyName = "CustomBackgrounds";
-
         public static BackgroundBehaviour skyBehaviour;
+        static Harmony harmPatcher;
 
         [Init]
         public CustomBackgrounds(IPALogger logger, [IPA.Config.Config.Prefer("json")] IConfigProvider cfgProvider)
@@ -32,25 +33,32 @@ namespace CustomBackgrounds
             PersistentSingleton<UISingleton>.TouchInstance();
             UISingleton.RegMenuButton();
 
-            BSMLSettings.instance.AddSettingsMenu("Backgrounds", "CustomBackgrounds.Views.SettingsMenu.bsml", Settings.instance);
-
             SceneManager.sceneLoaded += OnSceneLoaded;
             SetupDirectories();
             InitBackground();
+            ApplyPatches();
+        }
 
+        public static void ApplyPatches()
+        {
+            if (harmPatcher == null)
+            {
+                harmPatcher = new Harmony(assemblyName);
+                harmPatcher.PatchAll();
+            }
         }
 
         [OnDisable]
         public void Disable()
         {
-            BSMLSettings.instance.RemoveSettingsMenu(Settings.instance);
-            UISingleton.RemoveMenuButton();
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            harmPatcher.UnpatchAll(assemblyName);
+            harmPatcher = null;
         }
 
         private void OnSceneLoaded(Scene newScene, LoadSceneMode sceneMode)
         {
             var config = Settings.instance;
-            EnvironmentHider.hiddenObjs = 0;
             InitBackground();
             switch (newScene.name)
             {
@@ -85,7 +93,7 @@ namespace CustomBackgrounds
             if (skyBehaviour == null)
             {
                 skyBehaviour = new GameObject(nameof(BackgroundBehaviour)).AddComponent<BackgroundBehaviour>();
-                GameObject.DontDestroyOnLoad(skyBehaviour);
+                UnityEngine.Object.DontDestroyOnLoad(skyBehaviour);
             }
             skyBehaviour.enabled = config.EnableBackgrounds;
         }

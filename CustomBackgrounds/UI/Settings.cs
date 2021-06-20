@@ -57,11 +57,10 @@ namespace CustomBackgrounds
             get => config.GetBool("Hidden Objects", "Hide Platform", false);
             set => config.SetBool("Hidden Objects", "Hide Platform", value);
         }
-        [UIValue("hideobj-fog")]
-        public bool HideFog
+        public bool HideRings
         {
-            get => config.GetBool("Hidden Objects", "Hide Smoke", false);
-            set => config.SetBool("Hidden Objects", "Hide Smoke", value);
+            get => config.GetBool("Hidden Objects", "Hide Rings", true);
+            set => config.SetBool("Hidden Objects", "Hide Rings", value);
         }
         public bool HideMenuEnv
         {
